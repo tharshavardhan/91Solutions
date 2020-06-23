@@ -1,20 +1,26 @@
 import React from 'react'
-import {  Route,Redirect } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
+import { useSelector } from "react-redux";
 
-const isAuthenticate = () => {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      return true;
-    }
+const useAuthenticate = () => {
+
+  const { userDetails } = useSelector(state => state.userDetails)
+
+  if (userDetails.token) {
+    return true;
   }
-  
-  const PrivateRoute = ({ component: Component, ...rest }) => (
+}
+
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  let token = useAuthenticate()
+  return (
     <Route {...rest} render={(props) => (
-      isAuthenticate()
+      token
         ? <Component {...props} />
-        : <Redirect to='/' />
+        : <Redirect to='/login' />
     )} />
   )
-  
+}
 
-  export default PrivateRoute
+
+export default PrivateRoute
